@@ -1,0 +1,35 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: base
+    ports:
+      - "18000:18000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+      - backend-data:/app/data
+    command: >
+      sh -c "python -m app.init_db &&
+      uvicorn app.main:app --host 0.0.0.0 --port 18000 --reload"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "15173:15173"
+    environment:
+      - BACKEND_INTERNAL_URL=http://backend:18000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0 --port 15173
+    depends_on:
+      - backend
+
+volumes:
+  backend-data:

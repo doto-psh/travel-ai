@@ -1,0 +1,9 @@
+.git
+venv
+__pycache__
+*.py[cod]
+*.sqlite3
+*.db
+data
+.env
+alembic/versions/__pycache__
